@@ -4,26 +4,36 @@ import java.util.Date;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
+import javax.transaction.Transactional;
 
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
-import model.Todo;
+import model.Note;
 
 @ApplicationScoped
 public class Startup {
-    /**
-     * This method is executed at the start of your application
-     */
+
+    @Transactional
     public void start(@Observes StartupEvent evt) {
-        // in DEV mode we seed some data
+
         if(LaunchMode.current() == LaunchMode.DEVELOPMENT) {
-            Todo a = new Todo();
-            a.task = "First item";
+            Note a = new Note();
+            a.name = "my-meeting-with-stephane";
+            a.content = """
+                    # My meeting with Stephane
+                    
+                    Talking about *HTMX* with *Quarkus* is really cool! 
+                    """;
             a.persist();
 
-            Todo b = new Todo();
-            b.task = "Second item";
-            b.completed = new Date();
+            Note b = new Note();
+            b.name = "todo";
+            b.content = """
+                    # My ToDos
+                    
+                    - [ ] Write an abstract for the KCD France 2023
+                    - [x] Create an issue about the weird Renarde redirect :) 
+                    """;
             b.persist();
         }
     }

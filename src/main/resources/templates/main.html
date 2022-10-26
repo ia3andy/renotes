@@ -1,28 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- You can pass parameters from your templates to your main template and insert them -->
     <title>{#insert title/}</title>
-    <style type="text/css">
-    .head {
-      border-bottom: 1px solid black;
-      margin-bottom: 1em;
-    }
-    .head div {
-      display: inline-block;
-      margin: 0.5em;
-    }
-    </style>
+    <link rel="stylesheet" media="screen" href="/webjars/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" media="screen" href="/webjars/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="/webjars/bootstrap/js/bootstrap.min.js" type="text/javascript" charset="UTF-8"></script>
+
     {#insert moreStyles /}
     {#insert moreScripts /}
   </head>
   <body>
-    <div class="head">
-      <!-- You can make links to actions using the uri: namespace -->
-      <div><a href="{uri:Todos.index}">Index</a></div>
-      <div><a href="{uri:Todos.todos}">Todos</a></div>
+    <div class="navbar navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{uri:Notes.notes}">
+          <img src="/assets/images/logo.svg" alt="" width="30" height="24" class="d-inline-block align-text-top">
+          My Notes
+        </a>
+      </div>
     </div>
-    <!-- This inserts the body of your templates -->
     {#insert /}
   </body>
 </html>

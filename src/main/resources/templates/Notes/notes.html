@@ -1,0 +1,68 @@
+{#include main.html}
+{#title}My Notes{/title}
+{! Add some CSS !}
+{#moreStyles}
+<style>
+  .error {
+  	color: red;
+  	border-color: red;
+  }
+
+  .note-item {
+      cursor: pointer;
+  }
+
+  .note-form input {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      border-bottom: 0;
+  }
+
+  .note-form textarea {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      height: 500px;
+  }
+
+</style>
+{/moreStyles}
+
+<div class="d-flex justify-content-around ">
+    <div class="p-2">
+        <div class="list-group  mb-3">
+            {#for note in notes}
+            <a class="list-group-item list-group-item-action note-item" href="{uri:Notes.editNote(note.id)}">
+              {note.name}
+            </a>
+            {/for}
+        </div>
+        <a class="btn btn-light" href="{uri:Notes.newNote()}"><i class="bi bi-plus"></i> New Note</a>
+    </div>
+
+    <div class="flex-grow-1 p-2">
+        {#fragment id=noteForm rendered=false}
+            {@java.lang.String path}
+            {@model.Note n}
+            {#form path class="note-form"}
+            <div class="mb-3">
+                <input name="name" class="form-control" value="{n.name}" placeholder="Enter new note name" {#ifError 'note'}class="error"{/}/>
+                {#md-textarea id="note-content" name="content" value=n.content /}
+            </div>
+            {#ifError 'note'}
+            <div class="error">
+                Error: {#error 'note'/}
+            </div>
+            {/ifError}
+            <button type="submit" class="btn btn-primary">Save</button>
+            {/form}
+        {/fragment}
+
+        {#if currentNote && currentNote.id}
+            {#include $noteForm n=currentNote path=uri:Notes.saveNote(currentNote.id) /}
+        {#else if currentNote}
+            {#include $noteForm n=currentNote path=uri:Notes.saveNewNote() /}
+        {/if}
+    </div>
+
+</div>
+{/include}
