@@ -10,7 +10,14 @@
 
   .note-item {
       cursor: pointer;
+      width: 300px;
+      height: 40px;
   }
+  .note-item .note-delete-form { display: none; }
+  .note-item .note-delete-form button { padding: 0; color: #ccc; }
+  .note-item .note-delete-form button:hover { color: red; }
+  .note-item:hover .note-delete-form { display: block; }
+
 
   .note-form input {
       border-bottom-left-radius: 0;
@@ -27,40 +34,57 @@
 </style>
 {/moreStyles}
 
-<div class="d-flex justify-content-around ">
+<div class="left-bar d-flex justify-content-between">
     <div class="p-2">
-        <div class="list-group  mb-3">
+        <div
+                class="note-list list-group mb-3"
+                hx-get="{uri:Notes.notes()}"
+                hx-trigger="refreshNoteList from:body"
+        >
+            {#fragment id=noteList}
             {#for note in notes}
-            <a class="list-group-item list-group-item-action note-item" href="{uri:Notes.editNote(note.id)}">
-              {note.name}
+            <a
+                    class="list-group-item list-group-item-action note-item  d-flex justify-content-between align-items-center"
+                    href="{uri:Notes.editNote(note.id)}"
+                    hx-get="{uri:Notes.editNote(note.id)}"
+                    hx-push-url="true"
+                    hx-target=".note-editor"
+            >
+            {note.name}
+            {#form uri:Notes.deleteNote(note.id) class="note-delete-form"}
+                <button type="submit" class="btn"><i class="bi bi-trash"></i></button>
+            {/form}
             </a>
             {/for}
+            {/fragment}
         </div>
-        <a class="btn btn-light" href="{uri:Notes.newNote()}"><i class="bi bi-plus"></i> New Note</a>
+        <a
+                class="btn btn-light"
+                href="{uri:Notes.newNote()}"
+                hx-get="{uri:Notes.newNote()}"
+                hx-push-url="true"
+                hx-target=".note-editor"
+        ><i class="bi bi-plus"></i> New Note</a>
     </div>
 
-    <div class="flex-grow-1 p-2">
-        {#fragment id=noteForm rendered=false}
-            {@java.lang.String path}
-            {@model.Note n}
-            {#form path class="note-form"}
-            <div class="mb-3">
-                <input name="name" class="form-control" value="{n.name}" placeholder="Enter new note name" {#ifError 'note'}class="error"{/}/>
-                {#md-textarea id="note-content" name="content" value=n.content /}
-            </div>
-            {#ifError 'note'}
-            <div class="error">
-                Error: {#error 'note'/}
-            </div>
-            {/ifError}
-            <button type="submit" class="btn btn-primary">Save</button>
-            {/form}
-        {/fragment}
-
-        {#if currentNote && currentNote.id}
-            {#include $noteForm n=currentNote path=uri:Notes.saveNote(currentNote.id) /}
-        {#else if currentNote}
-            {#include $noteForm n=currentNote path=uri:Notes.saveNewNote() /}
+    <div class="note-editor flex-grow-1 p-2" hx-swap="morphdom">
+        {#if currentNote}
+            {#fragment id=noteForm}
+                {#let path=currentNote.id.ifTruthy(uri:Notes.saveNote(currentNote.id)).or(uri:Notes.saveNewNote())}
+                {#form path class="note-form" hx-post=path hx-trigger="submit" hx-target="note-editor"}
+                    <div class="mb-3">
+                        <input name="name" class="form-control" value="{currentNote.name}" placeholder="Enter new note name" {#ifError 'note'}class="error"{/}/>
+                        {#md-textarea id="note-content" name="content" value=currentNote.content /}
+                    </div>
+                    {#ifError 'note'}
+                    <div class="error">
+                        Error: {#error 'note'/}
+                    </div>
+                    {/ifError}
+                    <button type="submit" class="btn btn-primary">Save</button>
+                {/form}
+                {/let}
+            {/fragment}
         {/if}
     </div>
 
