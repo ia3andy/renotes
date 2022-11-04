@@ -38,9 +38,8 @@ public class Notes extends HxController {
 
     @Path("/new-note")
     public TemplateInstance newNote() {
+        // not really used
         Note note = new Note();
-        note.name = flash.get("new-note.name");
-        note.content = flash.get("new-note.content");
         if (isHxRequest()) {
             return Templates.notes$noteForm(note);
         }
@@ -50,6 +49,7 @@ public class Notes extends HxController {
     @Path("/note/{id}")
     public TemplateInstance editNote(@PathParam("id") Long id) {
         final Note note = Note.findById(id);
+        notFoundIfNull(note);
         if (isHxRequest()) {
             return Templates.notes$noteForm(note);
         }
@@ -58,24 +58,22 @@ public class Notes extends HxController {
 
     @Path("/note/{id}/delete")
     @POST
-    public void deleteNote(@PathParam("id") Long id) {
-        if(validationFailed()) {
-            notes();
-        }
+    public TemplateInstance deleteNote(@PathParam("id") Long id) {
         Note note = Note.findById(id);
+        notFoundIfNull(note);
         note.delete();
-        hx(TRIGGER, "refreshNoteList");
-        notes();
+        final List<Note> notes = Note.listAllSortedByLastUpdated();
+        return Templates.notes$noteList(notes);
     }
 
     @Path("/note/{id}/save")
     @POST
     public void saveNote(@PathParam("id") Long id, @RestForm @NotBlank String name, @RestForm @NotBlank String content) {
-        flashHxRequest();
         if(validationFailed()) {
             editNote(id);
         }
         Note note = Note.findById(id);
+        notFoundIfNull(note);
         note.name = name;
         note.content = content;
         note.updated = new Date();
@@ -86,10 +84,7 @@ public class Notes extends HxController {
 
     @POST
     public void saveNewNote(@RestForm @NotBlank String name, @RestForm @NotBlank String content) {
-        flashHxRequest();
         if(validationFailed()) {
-            flash("new-note.name", name);
-            flash("new-note.content", content);
             newNote();
         }
         Note note = new Note();

@@ -3,11 +3,6 @@
 {! Add some CSS !}
 {#moreStyles}
 <style>
-  .error {
-  	color: red;
-  	border-color: red;
-  }
-
   .note-item {
       cursor: pointer;
       width: 300px;
@@ -73,14 +68,21 @@
                 {#let path=currentNote.id.ifTruthy(uri:Notes.saveNote(currentNote.id)).or(uri:Notes.saveNewNote())}
                 {#form path class="note-form" hx-post=path hx-trigger="submit" hx-target="note-editor"}
                     <div class="mb-3">
-                        <input name="name" class="form-control" value="{currentNote.name}" placeholder="Enter new note name" {#ifError 'note'}class="error"{/}/>
-                        {#md-textarea id="note-content" name="content" value=currentNote.content /}
+                        <input name="name" class="form-control {#ifError 'name'}is-invalid{/}" value="{inject:flash.get('name') ?: currentNote.name}" placeholder="Enter new note name"/>
+                        {#ifError 'name'}
+                        <div class="invalid-feedback">
+                            Error: {#error 'name'/}
+                        </div>
+                        {/ifError}
                     </div>
-                    {#ifError 'note'}
-                    <div class="error">
-                        Error: {#error 'note'/}
+                    <div class="mb-3">
+                        {#md-textarea id="note-content" name="content" value=inject:flash.get('content').or(currentNote.content) /}
+                        {#ifError 'content'}
+                        <div class="invalid-feedback">
+                            Error: {#error 'content'/}
+                        </div>
+                        {/ifError}
                     </div>
-                    {/ifError}
                     <button type="submit" class="btn btn-primary">Save</button>
                 {/form}
                 {/let}

@@ -49,6 +49,12 @@ public class HxController extends Controller {
         flash(HX_REQUEST_HEADER, isHxRequest());
     }
 
+    @Override
+    protected void prepareForErrorRedirect() {
+        flashHxRequest();
+        super.prepareForErrorRedirect();
+    }
+    
     protected boolean isHxRequest() {
         final boolean hxRequest = Objects.equals(flash.get(HX_REQUEST_HEADER), true);
         if(hxRequest) {
