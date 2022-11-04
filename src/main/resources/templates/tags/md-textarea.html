@@ -6,7 +6,7 @@
         border-top-right-radius: 0;
     }
 </style>
-<textarea id="{id}" name="{name}"  class="form-control">{value}</textarea>
+<textarea id="{id}" name="{name}"  class="form-control {#ifError name}is-invalid{/}">{value}</textarea>
 
 <script type="text/javascript">
 (function(){
