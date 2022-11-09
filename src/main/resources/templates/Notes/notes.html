@@ -3,56 +3,65 @@
 {! Add some CSS !}
 {#moreStyles}
 <style>
-  .note-item {
-      cursor: pointer;
-      width: 300px;
-      height: 40px;
-  }
-  .note-item .note-delete-form { display: none; }
-  .note-item .note-delete-form button { padding: 0; color: #ccc; }
-  .note-item .note-delete-form button:hover { color: red; }
-  .note-item:hover .note-delete-form { display: block; }
+    .note-item {
+        padding: 0;
+    }
+    .note-item a, .note-item button {
+        padding: .5rem 1rem;
+    }
+    .note-item a {
+        cursor: pointer;
+        flex-grow: 1;
+        display: block;
+        color: #333;
+        text-decoration: none;
+    }
+    .note-item .note-delete-form { visibility: hidden; }
+    .note-item .note-delete-form button { color: #ccc; }
+    .note-item .note-delete-form button:hover { color: red; }
+    .note-item:hover .note-delete-form { visibility: visible; }
 
 
-  .note-form input {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      border-bottom: 0;
-  }
+    .note-form input {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom: 0;
+    }
 
-  .note-form textarea {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      height: 500px;
-  }
+    .note-form textarea {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        height: 500px;
+    }
 
 </style>
 {/moreStyles}
 
 <div class="left-bar d-flex justify-content-between">
     <div class="p-2">
-        <div
+        <ul
                 class="note-list list-group mb-3"
                 hx-get="{uri:Notes.notes()}"
                 hx-trigger="refreshNoteList from:body"
         >
             {#fragment id=noteList}
             {#for note in notes}
+            <li class="list-group-item note-item d-flex justify-content-between align-items-center">
             <a
-                    class="list-group-item list-group-item-action note-item  d-flex justify-content-between align-items-center"
                     href="{uri:Notes.editNote(note.id)}"
                     hx-get="{uri:Notes.editNote(note.id)}"
                     hx-push-url="true"
                     hx-target=".note-editor"
             >
             {note.name}
-            {#form uri:Notes.deleteNote(note.id) class="note-delete-form"}
-                <button type="submit" class="btn"><i class="bi bi-trash"></i></button>
-            {/form}
             </a>
+            {#form uri:Notes.deleteNote(note.id) class="note-delete-form" hx-post=uri:Notes.deleteNote(note.id) hx-trigger="submit" hx-target="note-list"}
+            <button type="submit" class="btn"><i class="bi bi-trash"></i></button>
+            </li>
+            {/form}
             {/for}
             {/fragment}
-        </div>
+        </ul>
         <a
                 class="btn btn-light"
                 href="{uri:Notes.newNote()}"
@@ -67,7 +76,7 @@
             {#fragment id=noteForm}
                 {#let path=currentNote.id.ifTruthy(uri:Notes.saveNote(currentNote.id)).or(uri:Notes.saveNewNote())}
                 {#form path class="note-form" hx-post=path hx-trigger="submit" hx-target="note-editor"}
-                    <div class="mb-3">
+                    <div>
                         <input name="name" class="form-control {#ifError 'name'}is-invalid{/}" value="{inject:flash.get('name') ?: currentNote.name}" placeholder="Enter new note name"/>
                         {#ifError 'name'}
                         <div class="invalid-feedback">

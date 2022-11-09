@@ -58,12 +58,12 @@ public class Notes extends HxController {
 
     @Path("/note/{id}/delete")
     @POST
-    public TemplateInstance deleteNote(@PathParam("id") Long id) {
+    public void deleteNote(@PathParam("id") Long id) {
         Note note = Note.findById(id);
         notFoundIfNull(note);
         note.delete();
         final List<Note> notes = Note.listAllSortedByLastUpdated();
-        return Templates.notes$noteList(notes);
+        notes();
     }
 
     @Path("/note/{id}/save")
