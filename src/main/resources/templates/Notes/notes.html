@@ -28,10 +28,8 @@
         border-bottom: 0;
     }
 
-    .note-form textarea {
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-        height: 500px;
+    .note-form .editor-wrapper {
+        min-height: 450px;
     }
 
 </style>
@@ -56,9 +54,9 @@
             {note.name}
             </a>
             {#form uri:Notes.deleteNote(note.id) class="note-delete-form" hx-post=uri:Notes.deleteNote(note.id) hx-trigger="submit" hx-target="note-list"}
-            <button type="submit" class="btn"><i class="bi bi-trash"></i></button>
-            </li>
+                <button type="submit" class="btn"><i class="bi bi-trash"></i></button>
             {/form}
+            </li>
             {/for}
             {/fragment}
         </ul>
@@ -70,30 +68,32 @@
                 hx-target=".note-editor"
         ><i class="bi bi-plus"></i> New Note</a>
     </div>
-
-    <div class="note-editor flex-grow-1 p-2" hx-swap="morphdom">
+    <div class="note-editor flex-grow-1 p-2">
         {#if currentNote}
             {#fragment id=noteForm}
                 {#let path=currentNote.id.ifTruthy(uri:Notes.saveNote(currentNote.id)).or(uri:Notes.saveNewNote())}
-                {#form path class="note-form" hx-post=path hx-trigger="submit" hx-target="note-editor"}
-                    <div>
-                        <input name="name" class="form-control {#ifError 'name'}is-invalid{/}" value="{inject:flash.get('name') ?: currentNote.name}" placeholder="Enter new note name"/>
-                        {#ifError 'name'}
-                        <div class="invalid-feedback">
-                            Error: {#error 'name'/}
+                <form class="note-form" hx-post="{path}" hx-encoding='multipart/form-data' hx-target="this" hx-push-url="true">
+                    {#authenticityToken/}
+                    <div class="editor-wrapper">
+                        <div>
+                            <input name="name" class="form-control {#ifError 'name'}is-invalid{/}" value="{inject:flash.get('name') ?: currentNote.name}" placeholder="Enter new note name"/>
+                            {#ifError 'name'}
+                            <div class="invalid-feedback">
+                                Error: {#error 'name'/}
+                            </div>
+                            {/ifError}
                         </div>
-                        {/ifError}
-                    </div>
-                    <div class="mb-3">
-                        {#md-textarea id="note-content" name="content" value=inject:flash.get('content').or(currentNote.content) /}
-                        {#ifError 'content'}
-                        <div class="invalid-feedback">
-                            Error: {#error 'content'/}
+                        <div class="mb-3">
+                            {#md-textarea id="note-content" name="content" value=inject:flash.get('content').or(currentNote.content) /}
+                            {#ifError 'content'}
+                            <div class="invalid-feedback">
+                                Error: {#error 'content'/}
+                            </div>
+                            {/ifError}
                         </div>
-                        {/ifError}
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                {/form}
+                    <button class="btn btn-primary">Save</button>
+                </form>
                 {/let}
             {/fragment}
         {/if}
