@@ -1,5 +1,4 @@
-<script src="/webjars/easymde/dist/easymde.min.js" type="text/javascript" charset="UTF-8"></script>
-<link rel="stylesheet" media="screen" href="/webjars/easymde/dist/easymde.min.css">
+
 <style>
     .editor-toolbar {
         border-top-left-radius: 0;
@@ -10,6 +9,6 @@
 
 <script type="text/javascript">
 (function(){
-    new EasyMDE({ element: document.getElementById("{id}") });
+    new EasyMDE({ element: document.getElementById("{id}"), forceSync: true });
 })();
 </script>

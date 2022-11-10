@@ -3,56 +3,63 @@
 {! Add some CSS !}
 {#moreStyles}
 <style>
-  .note-item {
-      cursor: pointer;
-      width: 300px;
-      height: 40px;
-  }
-  .note-item .note-delete-form { display: none; }
-  .note-item .note-delete-form button { padding: 0; color: #ccc; }
-  .note-item .note-delete-form button:hover { color: red; }
-  .note-item:hover .note-delete-form { display: block; }
+    .note-item {
+        padding: 0;
+    }
+    .note-item a, .note-item button {
+        padding: .5rem 1rem;
+    }
+    .note-item a {
+        cursor: pointer;
+        flex-grow: 1;
+        display: block;
+        color: #333;
+        text-decoration: none;
+    }
+    .note-item .note-delete-form { visibility: hidden; }
+    .note-item .note-delete-form button { color: #ccc; }
+    .note-item .note-delete-form button:hover { color: red; }
+    .note-item:hover .note-delete-form { visibility: visible; }
 
 
-  .note-form input {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      border-bottom: 0;
-  }
+    .note-form input {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom: 0;
+    }
 
-  .note-form textarea {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      height: 500px;
-  }
+    .note-form .editor-wrapper {
+        min-height: 450px;
+    }
 
 </style>
 {/moreStyles}
 
 <div class="left-bar d-flex justify-content-between">
     <div class="p-2">
-        <div
+        <ul
                 class="note-list list-group mb-3"
                 hx-get="{uri:Notes.notes()}"
                 hx-trigger="refreshNoteList from:body"
         >
             {#fragment id=noteList}
             {#for note in notes}
+            <li class="list-group-item note-item d-flex justify-content-between align-items-center">
             <a
-                    class="list-group-item list-group-item-action note-item  d-flex justify-content-between align-items-center"
                     href="{uri:Notes.editNote(note.id)}"
                     hx-get="{uri:Notes.editNote(note.id)}"
                     hx-push-url="true"
                     hx-target=".note-editor"
             >
             {note.name}
-            {#form uri:Notes.deleteNote(note.id) class="note-delete-form"}
+            </a>
+            {#form uri:Notes.deleteNote(note.id) class="note-delete-form" hx-post=uri:Notes.deleteNote(note.id) hx-trigger="submit" hx-target="note-list"}
                 <button type="submit" class="btn"><i class="bi bi-trash"></i></button>
             {/form}
-            </a>
+            </li>
             {/for}
             {/fragment}
-        </div>
+        </ul>
         <a
                 class="btn btn-light"
                 href="{uri:Notes.newNote()}"
@@ -61,30 +68,32 @@
                 hx-target=".note-editor"
         ><i class="bi bi-plus"></i> New Note</a>
     </div>
-
-    <div class="note-editor flex-grow-1 p-2" hx-swap="morphdom">
+    <div class="note-editor flex-grow-1 p-2">
         {#if currentNote}
             {#fragment id=noteForm}
                 {#let path=currentNote.id.ifTruthy(uri:Notes.saveNote(currentNote.id)).or(uri:Notes.saveNewNote())}
-                {#form path class="note-form" hx-post=path hx-trigger="submit" hx-target="note-editor"}
-                    <div class="mb-3">
-                        <input name="name" class="form-control {#ifError 'name'}is-invalid{/}" value="{inject:flash.get('name') ?: currentNote.name}" placeholder="Enter new note name"/>
-                        {#ifError 'name'}
-                        <div class="invalid-feedback">
-                            Error: {#error 'name'/}
+                <form class="note-form" hx-post="{path}" hx-encoding='multipart/form-data' hx-target="this" hx-push-url="true">
+                    {#authenticityToken/}
+                    <div class="editor-wrapper">
+                        <div>
+                            <input name="name" class="form-control {#ifError 'name'}is-invalid{/}" value="{inject:flash.get('name') ?: currentNote.name}" placeholder="Enter new note name"/>
+                            {#ifError 'name'}
+                            <div class="invalid-feedback">
+                                Error: {#error 'name'/}
+                            </div>
+                            {/ifError}
                         </div>
-                        {/ifError}
-                    </div>
-                    <div class="mb-3">
-                        {#md-textarea id="note-content" name="content" value=inject:flash.get('content').or(currentNote.content) /}
-                        {#ifError 'content'}
-                        <div class="invalid-feedback">
-                            Error: {#error 'content'/}
+                        <div class="mb-3">
+                            {#md-textarea id="note-content" name="content" value=inject:flash.get('content').or(currentNote.content) /}
+                            {#ifError 'content'}
+                            <div class="invalid-feedback">
+                                Error: {#error 'content'/}
+                            </div>
+                            {/ifError}
                         </div>
-                        {/ifError}
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                {/form}
+                    <button class="btn btn-primary">Save</button>
+                </form>
                 {/let}
             {/fragment}
         {/if}

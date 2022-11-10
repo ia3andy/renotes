@@ -51,6 +51,7 @@ public class Notes extends HxController {
         final Note note = Note.findById(id);
         notFoundIfNull(note);
         if (isHxRequest()) {
+            hx(TRIGGER, "refreshNoteList");
             return Templates.notes$noteForm(note);
         }
         return Templates.notes(Note.listAllSortedByLastUpdated(), note);
@@ -58,12 +59,13 @@ public class Notes extends HxController {
 
     @Path("/note/{id}/delete")
     @POST
-    public TemplateInstance deleteNote(@PathParam("id") Long id) {
+    public void deleteNote(@PathParam("id") Long id) {
+        flashHxRequest();
         Note note = Note.findById(id);
         notFoundIfNull(note);
         note.delete();
         final List<Note> notes = Note.listAllSortedByLastUpdated();
-        return Templates.notes$noteList(notes);
+        notes();
     }
 
     @Path("/note/{id}/save")
@@ -78,12 +80,11 @@ public class Notes extends HxController {
         note.content = content;
         note.updated = new Date();
         note.persist();
-        hx(TRIGGER, "refreshNoteList");
         editNote(id);
     }
 
     @POST
-    public void saveNewNote(@RestForm @NotBlank String name, @RestForm @NotBlank String content) {
+    public void saveNewNote(@RestForm @NotBlank String name, @RestForm String content) {
         if(validationFailed()) {
             newNote();
         }
@@ -91,7 +92,6 @@ public class Notes extends HxController {
         note.name = name;
         note.content = content;
         note.persist();
-        hx(TRIGGER, "refreshNoteList");
         editNote(note.id);
     }
 }
