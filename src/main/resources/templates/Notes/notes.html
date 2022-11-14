@@ -5,8 +5,9 @@
 <style>
     .note-item {
         padding: 0;
+        width: 300px;
     }
-    .note-item a, .note-item button {
+    .note-item a, .note-item button, .note-item > i {
         padding: .5rem 1rem;
     }
     .note-item a {
@@ -16,11 +17,14 @@
         color: #333;
         text-decoration: none;
     }
-    .note-item .note-delete-form { visibility: hidden; }
-    .note-item .note-delete-form button { color: #ccc; }
-    .note-item .note-delete-form button:hover { color: red; }
-    .note-item:hover .note-delete-form { visibility: visible; }
+    .note-item button.note-delete  { color: #ccc; visibility: hidden;  }
+    .note-item button.note-delete:hover { color: red; }
+    .note-item:hover button.note-delete { visibility: visible; }
 
+    .note-item.htmx-swapping a, .note-item.htmx-swapping button {
+        opacity: 0;
+        transition: opacity 1s ease-out;
+    }
 
     .note-form input {
         border-bottom-left-radius: 0;
@@ -32,43 +36,53 @@
         min-height: 450px;
     }
 
+
 </style>
 {/moreStyles}
-
 <div class="left-bar d-flex justify-content-between">
     <div class="p-2">
+        {#fragment id=noteList}
         <ul
+                id="note-list"
+                hx-swap-oob="true"
                 class="note-list list-group mb-3"
-                hx-get="{uri:Notes.notes()}"
-                hx-trigger="refreshNoteList from:body"
         >
-            {#fragment id=noteList}
             {#for note in notes}
-            <li class="list-group-item note-item d-flex justify-content-between align-items-center">
-            <a
-                    href="{uri:Notes.editNote(note.id)}"
-                    hx-get="{uri:Notes.editNote(note.id)}"
-                    hx-push-url="true"
-                    hx-target=".note-editor"
-            >
-            {note.name}
-            </a>
-            {#form uri:Notes.deleteNote(note.id) class="note-delete-form" hx-post=uri:Notes.deleteNote(note.id) hx-trigger="submit" hx-target="note-list"}
-                <button type="submit" class="btn"><i class="bi bi-trash"></i></button>
-            {/form}
+            <li class="{#if note.id == currentNoteId}current-note {/if}list-group-item note-item d-flex justify-content-between align-items-center" >
+                <a
+                        href="{uri:Notes.editNote(note.id)}"
+                        hx-get="{uri:Notes.editNote(note.id)}"
+                        hx-push-url="true"
+                        hx-target="#note-editor"
+                        hx-swap="innerHTML"
+                >
+                {note.name}
+                </a>
+                {#if note.id != currentNoteId}
+                <button class="btn note-delete"
+                        hx-delete="{uri:Notes.deleteNote(note.id)}"
+                        hx-confirm="Are you sure?"
+                        hx-target="closest .note-item"
+                        hx-swap="outerHTML swap:0.5s"
+                />
+                    <i class="bi bi-trash"></i>
+                </button>
+                {#else}
+                <i class="bi bi-caret-right-fill"></i>
+                {/if}
             </li>
             {/for}
-            {/fragment}
         </ul>
+        {/fragment}
         <a
                 class="btn btn-light"
                 href="{uri:Notes.newNote()}"
                 hx-get="{uri:Notes.newNote()}"
                 hx-push-url="true"
-                hx-target=".note-editor"
+                hx-target="#note-editor"
         ><i class="bi bi-plus"></i> New Note</a>
     </div>
-    <div class="note-editor flex-grow-1 p-2">
+    <div id="note-editor" class="flex-grow-1 p-2">
         {#if currentNote}
             {#fragment id=noteForm}
                 {#let path=currentNote.id.ifTruthy(uri:Notes.saveNote(currentNote.id)).or(uri:Notes.saveNewNote())}
@@ -98,6 +112,5 @@
             {/fragment}
         {/if}
     </div>
-
 </div>
 {/include}

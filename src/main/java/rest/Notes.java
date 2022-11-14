@@ -2,12 +2,17 @@ package rest;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
+import io.quarkus.qute.RawString;
 import io.smallrye.common.annotation.Blocking;
 import org.jboss.resteasy.reactive.RestForm;
 
@@ -15,25 +20,25 @@ import io.quarkus.qute.TemplateInstance;
 import io.quarkus.qute.CheckedTemplate;
 import model.Note;
 
-import static rest.HxController.HxResponseHeader.TRIGGER;
-
 @Blocking
 public class Notes extends HxController {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance notes(List<Note> notes, Note currentNote);
-        public static native TemplateInstance notes$noteList(List<Note> notes);
+        public static native TemplateInstance notes(List<Note> notes, Long currentNoteId, Note currentNote);
+        public static native TemplateInstance notes$noteList(List<Note> notes, Long currentNoteId);
         public static native TemplateInstance notes$noteForm(Note currentNote);
+        public static native TemplateInstance oob(RawString... items);
     }
 
     @Path("/")
-    public TemplateInstance notes() {
+    public TemplateInstance notes(@QueryParam("id") Long id) {
         final List<Note> notes = Note.listAllSortedByLastUpdated();
         if (isHxRequest()) {
-            return Templates.notes$noteList(notes);
+            return Templates.notes$noteList(notes, id);
         }
-        return Templates.notes(notes, null);
+        Note note = id != null ? Note.findById(id) : null;
+        return Templates.notes(notes, id, note);
     }
 
     @Path("/new-note")
@@ -43,36 +48,41 @@ public class Notes extends HxController {
         if (isHxRequest()) {
             return Templates.notes$noteForm(note);
         }
-        return Templates.notes(Note.listAllSortedByLastUpdated(), note);
+        return Templates.notes(Note.listAllSortedByLastUpdated(), null, note);
     }
 
     @Path("/note/{id}")
     public TemplateInstance editNote(@PathParam("id") Long id) {
         final Note note = Note.findById(id);
-        notFoundIfNull(note);
-        if (isHxRequest()) {
-            hx(TRIGGER, "refreshNoteList");
-            return Templates.notes$noteForm(note);
+        if(note == null) {
+            notes(null);
+            return null;
         }
-        return Templates.notes(Note.listAllSortedByLastUpdated(), note);
+        if (isHxRequest()) {
+            return  Templates.oob(
+                    new RawString(Templates.notes$noteList(Note.listAllSortedByLastUpdated(), id).render()),
+                    new RawString(Templates.notes$noteForm(note).render())
+                    );
+        }
+        return Templates.notes(Note.listAllSortedByLastUpdated(), id, note);
     }
 
     @Path("/note/{id}/delete")
-    @POST
-    public void deleteNote(@PathParam("id") Long id) {
-        flashHxRequest();
+    @DELETE
+    public Response deleteNote(@PathParam("id") Long id) {
+        onlyHxRequest();
         Note note = Note.findById(id);
         notFoundIfNull(note);
         note.delete();
-        final List<Note> notes = Note.listAllSortedByLastUpdated();
-        notes();
+        return Response.ok().build();
     }
 
     @Path("/note/{id}/save")
     @POST
-    public void saveNote(@PathParam("id") Long id, @RestForm @NotBlank String name, @RestForm @NotBlank String content) {
+    public void saveNote(@PathParam("id") Long id, @RestForm @NotBlank String name, @RestForm String content) {
         if(validationFailed()) {
             editNote(id);
+            return;
         }
         Note note = Note.findById(id);
         notFoundIfNull(note);
@@ -80,6 +90,7 @@ public class Notes extends HxController {
         note.content = content;
         note.updated = new Date();
         note.persist();
+        flashHxRequest();
         editNote(id);
     }
 
@@ -92,6 +103,7 @@ public class Notes extends HxController {
         note.name = name;
         note.content = content;
         note.persist();
+        flashHxRequest();
         editNote(note.id);
     }
 }

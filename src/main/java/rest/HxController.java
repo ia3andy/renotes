@@ -1,10 +1,16 @@
 package rest;
 
 import io.quarkiverse.renarde.Controller;
+import io.quarkus.qute.CheckedTemplate;
+import io.quarkus.qute.TemplateInstance;
 import io.vertx.core.http.HttpServerResponse;
+import model.Note;
 
 import javax.inject.Inject;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.Objects;
 
 public class HxController extends Controller {
@@ -25,8 +31,7 @@ public class HxController extends Controller {
         // triggers client side events after the swap step
         TRIGGER_AFTER_SWAP("HX-Trigger-After-Swap"),
         // triggers client side events after the settle step
-        TRIGGER_AFTER_SETTLE("HX-Trigger-After-Settle")
-        ;
+        TRIGGER_AFTER_SETTLE("HX-Trigger-After-Settle");
 
         private final String key;
 
@@ -49,15 +54,22 @@ public class HxController extends Controller {
         flash(HX_REQUEST_HEADER, isHxRequest());
     }
 
+    protected void onlyHxRequest() {
+        if (!isHxRequest()) {
+            throw new WebApplicationException(
+                    Response.status(Response.Status.BAD_REQUEST).entity("Only Hx request are allowed on this method").build());
+        }
+    }
+
     @Override
     protected void prepareForErrorRedirect() {
         flashHxRequest();
         super.prepareForErrorRedirect();
     }
-    
+
     protected boolean isHxRequest() {
         final boolean hxRequest = Objects.equals(flash.get(HX_REQUEST_HEADER), true);
-        if(hxRequest) {
+        if (hxRequest) {
             return true;
         }
         return Objects.equals(httpHeaders.getHeaderString(HX_REQUEST_HEADER), "true");
