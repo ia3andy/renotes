@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import io.quarkus.qute.RawString;
 import io.smallrye.common.annotation.Blocking;
+import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.RestForm;
 
 import io.quarkus.qute.TemplateInstance;
@@ -28,7 +29,7 @@ public class Notes extends HxController {
         public static native TemplateInstance notes(List<Note> notes, Long currentNoteId, Note currentNote);
         public static native TemplateInstance notes$noteList(List<Note> notes, Long currentNoteId);
         public static native TemplateInstance notes$noteForm(Note currentNote);
-        public static native TemplateInstance oob(RawString... items);
+        public static native TemplateInstance oob(Uni<String>... items);
     }
 
     @Path("/")
@@ -60,8 +61,8 @@ public class Notes extends HxController {
         }
         if (isHxRequest()) {
             return  Templates.oob(
-                    new RawString(Templates.notes$noteList(Note.listAllSortedByLastUpdated(), id).render()),
-                    new RawString(Templates.notes$noteForm(note).render())
+                    Templates.notes$noteList(Note.listAllSortedByLastUpdated(), id).createUni(),
+                    Templates.notes$noteForm(note).createUni()
                     );
         }
         return Templates.notes(Note.listAllSortedByLastUpdated(), id, note);
@@ -69,12 +70,13 @@ public class Notes extends HxController {
 
     @Path("/note/{id}/delete")
     @DELETE
-    public Response deleteNote(@PathParam("id") Long id) {
+    public String deleteNote(@PathParam("id") Long id) {
         onlyHxRequest();
         Note note = Note.findById(id);
         notFoundIfNull(note);
         note.delete();
-        return Response.ok().build();
+        // HTMX is not a fan of 204 No Content for swapping https://github.com/bigskysoftware/htmx/issues/1130
+        return "";
     }
 
     @Path("/note/{id}/save")
