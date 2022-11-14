@@ -2,6 +2,7 @@ package rest;
 
 import io.quarkiverse.renarde.Controller;
 import io.quarkus.qute.CheckedTemplate;
+import io.quarkus.qute.Qute;
 import io.quarkus.qute.TemplateInstance;
 import io.vertx.core.http.HttpServerResponse;
 import model.Note;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,6 +51,13 @@ public class HxController extends Controller {
 
     @Inject
     protected HttpServerResponse response;
+
+    public static TemplateInstance concatTemplates(TemplateInstance... templates) {
+        return Qute.fmt("{#each elements}{it.raw}{/each}")
+                .cache()
+                .data("elements", Arrays.stream(templates).map(TemplateInstance::createUni))
+                .instance();
+    }
 
     protected void flashHxRequest() {
         flash(HX_REQUEST_HEADER, isHxRequest());

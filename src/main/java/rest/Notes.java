@@ -29,7 +29,6 @@ public class Notes extends HxController {
         public static native TemplateInstance notes(List<Note> notes, Long currentNoteId, Note currentNote);
         public static native TemplateInstance notes$noteList(List<Note> notes, Long currentNoteId);
         public static native TemplateInstance notes$noteForm(Note currentNote);
-        public static native TemplateInstance oob(Uni<String>... items);
     }
 
     @Path("/")
@@ -60,9 +59,9 @@ public class Notes extends HxController {
             return null;
         }
         if (isHxRequest()) {
-            return  Templates.oob(
-                    Templates.notes$noteList(Note.listAllSortedByLastUpdated(), id).createUni(),
-                    Templates.notes$noteForm(note).createUni()
+            return  concatTemplates(
+                    Templates.notes$noteList(Note.listAllSortedByLastUpdated(), id),
+                    Templates.notes$noteForm(note)
                     );
         }
         return Templates.notes(Note.listAllSortedByLastUpdated(), id, note);
