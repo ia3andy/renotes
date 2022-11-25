@@ -3,9 +3,12 @@
 {! Add some CSS !}
 {#moreStyles}
 <style>
+    .note-list {
+        min-width: 400px;
+    }
     .note-item {
         padding: 0;
-        width: 300px;
+        width: 400px;
     }
     .note-item a, .note-item button, .note-item > i {
         padding: .5rem 1rem;
@@ -41,14 +44,25 @@
 {/moreStyles}
 <div class="left-bar d-flex justify-content-between">
     <div class="p-2">
+        <div class="mb-3 d-flex">
+            <a
+                    class="btn btn-light"
+                    href="{uriabs:Notes.newNote()}"
+                    hx-get="{uriabs:Notes.newNote()}"
+                    hx-push-url="true"
+                    hx-target="#note-editor"
+            ><i class="bi bi-plus"></i> New Note</a>
+            {#noteSearch value=search /}
+        </div>
+
         {#fragment id=noteList}
         <ul
                 id="note-list"
                 hx-swap-oob="true"
-                class="note-list list-group mb-3"
+                class="note-list list-group"
         >
             {#for note in notes}
-            <li class="{#if note.id == currentNoteId}current-note {/if}list-group-item note-item d-flex justify-content-between align-items-center" >
+            <li class="{#if note.id == currentNoteId}active {/if}list-group-item note-item d-flex justify-content-between align-items-center" >
                 <a
                         href="{uri:Notes.editNote(note.id)}"
                         hx-get="{uri:Notes.editNote(note.id)}"
@@ -68,19 +82,12 @@
                     <i class="bi bi-trash"></i>
                 </button>
                 {#else}
-                <i class="bi bi-caret-right-fill"></i>
+                <i class="bi bi-caret-right"></i>
                 {/if}
             </li>
             {/for}
         </ul>
         {/fragment}
-        <a
-                class="btn btn-light"
-                href="{uri:Notes.newNote()}"
-                hx-get="{uri:Notes.newNote()}"
-                hx-push-url="true"
-                hx-target="#note-editor"
-        ><i class="bi bi-plus"></i> New Note</a>
     </div>
     <div id="note-editor" class="flex-grow-1 p-2">
         {#if currentNote}
@@ -98,7 +105,7 @@
                             {/ifError}
                         </div>
                         <div class="mb-3">
-                            {#md-textarea id="note-content" name="content" value=inject:flash.get('content').or(currentNote.content) /}
+                            {#mdTextarea id="note-content" name="content" value=inject:flash.get('content').or(currentNote.content) /}
                             {#ifError 'content'}
                             <div class="invalid-feedback">
                                 Error: {#error 'content'/}
