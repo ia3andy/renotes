@@ -1,75 +1,72 @@
 package rest;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import io.quarkus.qute.CheckedTemplate;
+import io.quarkus.qute.TemplateInstance;
+import io.smallrye.common.annotation.Blocking;
+import model.Note;
+import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.RestPath;
+import org.jboss.resteasy.reactive.RestQuery;
 
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-
-import io.quarkus.qute.RawString;
-import io.smallrye.common.annotation.Blocking;
-import io.smallrye.mutiny.Uni;
-import org.jboss.resteasy.reactive.RestForm;
-
-import io.quarkus.qute.TemplateInstance;
-import io.quarkus.qute.CheckedTemplate;
-import model.Note;
+import java.util.Date;
+import java.util.List;
 
 @Blocking
+@Path("/notes")
 public class Notes extends HxController {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance notes(List<Note> notes, Long currentNoteId, Note currentNote);
+        public static native TemplateInstance notes(List<Note> notes, Long currentNoteId, Note currentNote, String search);
         public static native TemplateInstance notes$noteList(List<Note> notes, Long currentNoteId);
         public static native TemplateInstance notes$noteForm(Note currentNote);
     }
 
-    @Path("/")
-    public TemplateInstance notes(@QueryParam("id") Long id) {
-        final List<Note> notes = Note.listAllSortedByLastUpdated();
+    @Path("")
+    public TemplateInstance notes(@RestQuery("id") Long id, @RestQuery("search") String search) {
+        final List<Note> notes = Note.search(search);
         if (isHxRequest()) {
             return Templates.notes$noteList(notes, id);
         }
         Note note = id != null ? Note.findById(id) : null;
-        return Templates.notes(notes, id, note);
+        return Templates.notes(notes, id, note, search);
     }
 
-    @Path("/new-note")
     public TemplateInstance newNote() {
         // not really used
         Note note = new Note();
         if (isHxRequest()) {
-            return Templates.notes$noteForm(note);
+            this.hx(HxResponseHeader.TRIGGER, "refreshNoteList");
+            return  concatTemplates(
+                    Templates.notes$noteList(Note.listAllSortedByLastUpdated(), null),
+                    Templates.notes$noteForm(note)
+            );
         }
-        return Templates.notes(Note.listAllSortedByLastUpdated(), null, note);
+        return Templates.notes(Note.listAllSortedByLastUpdated(), null, note, null);
     }
 
-    @Path("/note/{id}")
-    public TemplateInstance editNote(@PathParam("id") Long id) {
+    public TemplateInstance editNote(@RestPath("id") Long id) {
         final Note note = Note.findById(id);
         if(note == null) {
-            notes(null);
+            notes(null, null);
             return null;
         }
         if (isHxRequest()) {
+            this.hx(HxResponseHeader.TRIGGER, "refreshNoteList");
             return  concatTemplates(
                     Templates.notes$noteList(Note.listAllSortedByLastUpdated(), id),
                     Templates.notes$noteForm(note)
                     );
         }
-        return Templates.notes(Note.listAllSortedByLastUpdated(), id, note);
+        return Templates.notes(Note.listAllSortedByLastUpdated(), id, note, null);
     }
 
-    @Path("/note/{id}/delete")
     @DELETE
-    public String deleteNote(@PathParam("id") Long id) {
+    public String deleteNote(@RestPath("id") Long id) {
         onlyHxRequest();
         Note note = Note.findById(id);
         notFoundIfNull(note);
@@ -78,9 +75,9 @@ public class Notes extends HxController {
         return "";
     }
 
-    @Path("/note/{id}/save")
+
     @POST
-    public void saveNote(@PathParam("id") Long id, @RestForm @NotBlank String name, @RestForm String content) {
+    public void saveNote(@RestPath("id") Long id, @RestForm @NotBlank String name, @RestForm String content) {
         if(validationFailed()) {
             editNote(id);
             return;
