@@ -7,10 +7,11 @@
         display: none;
     }
 </style>
-<script type="text/javascript">
-    (function(){
-        stimulus.register("search", class extends Stimulus.Controller {
-            static targets = [ "open", "close", "input" ]
+<script type="module">
+        import { Controller } from "stimulus";
+
+        Stimulus.register("search", class extends Controller {
+            static targets = [ "open", "close", "input" ];
 
             open() {
                 this.inputTarget.style.display = 'block';
@@ -28,8 +29,7 @@
                 this.close();
                 this.inputTarget.value = '';
             }
-        })
-    })();
+    });
 </script>
 <div class="d-flex flex-grow-1" data-controller="search" data-action="refreshNoteList@document->search#clear">
     <a
