@@ -56,13 +56,19 @@
     <dependency>
       <groupId>io.quarkiverse.web-bundler</groupId>
       <artifactId>quarkus-web-bundler</artifactId>
-      <version>0.0.1-alpha3</version>
+      <version>0.0.1-alpha4</version>
     </dependency>
+
     <!-- MVNPM !-->
     <dependency>
       <groupId>org.mvnpm</groupId>
       <artifactId>htmx.org</artifactId>
       <version>1.9.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mvnpm.at.hotwired</groupId>
+      <artifactId>stimulus</artifactId>
+      <version>3.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.mvnpm</groupId>
@@ -74,9 +80,6 @@
       <artifactId>bootstrap-icons</artifactId>
       <version>1.10.5</version>
     </dependency>
-
-
-
     <dependency>
       <groupId>org.mvnpm.at.hotwired</groupId>
       <artifactId>stimulus</artifactId>
