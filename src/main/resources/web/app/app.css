@@ -1,0 +1,35 @@
+.note-list {
+    min-width: 400px;
+}
+.note-item {
+    padding: 0;
+    width: 400px;
+}
+.note-item a, .note-item button, .note-item > i {
+    padding: .5rem 1rem;
+}
+.note-item a {
+    cursor: pointer;
+    flex-grow: 1;
+    display: block;
+    color: #333;
+    text-decoration: none;
+}
+.note-item button.note-delete  { color: #ccc; visibility: hidden;  }
+.note-item button.note-delete:hover { color: red; }
+.note-item:hover button.note-delete { visibility: visible; }
+
+.note-item.htmx-swapping a, .note-item.htmx-swapping button {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
+.note-form input {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: 0;
+}
+
+.note-form .editor-wrapper {
+    min-height: 450px;
+}

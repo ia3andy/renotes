@@ -1,47 +1,5 @@
 {#include main.html}
 {#title}My Notes{/title}
-{! Add some CSS !}
-{#moreStyles}
-<style>
-    .note-list {
-        min-width: 400px;
-    }
-    .note-item {
-        padding: 0;
-        width: 400px;
-    }
-    .note-item a, .note-item button, .note-item > i {
-        padding: .5rem 1rem;
-    }
-    .note-item a {
-        cursor: pointer;
-        flex-grow: 1;
-        display: block;
-        color: #333;
-        text-decoration: none;
-    }
-    .note-item button.note-delete  { color: #ccc; visibility: hidden;  }
-    .note-item button.note-delete:hover { color: red; }
-    .note-item:hover button.note-delete { visibility: visible; }
-
-    .note-item.htmx-swapping a, .note-item.htmx-swapping button {
-        opacity: 0;
-        transition: opacity 1s ease-out;
-    }
-
-    .note-form input {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        border-bottom: 0;
-    }
-
-    .note-form .editor-wrapper {
-        min-height: 450px;
-    }
-
-
-</style>
-{/moreStyles}
 <div class="left-bar d-flex justify-content-between">
     <div class="p-2">
         <div class="mb-3 d-flex">
@@ -52,7 +10,7 @@
                     hx-push-url="true"
                     hx-target="#note-editor"
             ><i class="bi bi-plus"></i> New Note</a>
-            {#noteSearch value=search /}
+            {#NoteSearch value=search /}
         </div>
 
         {#fragment id=noteList}
@@ -105,7 +63,7 @@
                             {/ifError}
                         </div>
                         <div class="mb-3">
-                            {#mdTextarea id="note-content" name="content" value=inject:flash.get('content').or(currentNote.content) /}
+                            {#NoteEditor id="note-content" name="content" value=inject:flash.get('content').or(currentNote.content) /}
                             {#ifError 'content'}
                             <div class="invalid-feedback">
                                 Error: {#error 'content'/}
