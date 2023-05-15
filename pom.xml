@@ -56,7 +56,7 @@
     <dependency>
       <groupId>io.quarkiverse.web-bundler</groupId>
       <artifactId>quarkus-web-bundler</artifactId>
-      <version>999-SNAPSHOT</version>
+      <version>0.0.1-alpha1</version>
     </dependency>
     <!-- MVNPM !-->
 
