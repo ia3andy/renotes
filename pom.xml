@@ -56,20 +56,9 @@
     <dependency>
       <groupId>io.quarkiverse.web-bundler</groupId>
       <artifactId>quarkus-web-bundler</artifactId>
-      <version>0.0.1-alpha1</version>
+      <version>0.0.1-alpha3</version>
     </dependency>
     <!-- MVNPM !-->
-
-    <dependency>
-      <groupId>org.mvnpm.at.hotwired</groupId>
-      <artifactId>stimulus</artifactId>
-      <version>3.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mvnpm</groupId>
-      <artifactId>easymde</artifactId>
-      <version>2.18.0</version>
-    </dependency>
     <dependency>
       <groupId>org.mvnpm</groupId>
       <artifactId>htmx.org</artifactId>
@@ -86,6 +75,18 @@
       <version>1.10.5</version>
     </dependency>
 
+
+
+    <dependency>
+      <groupId>org.mvnpm.at.hotwired</groupId>
+      <artifactId>stimulus</artifactId>
+      <version>3.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mvnpm</groupId>
+      <artifactId>easymde</artifactId>
+      <version>2.18.0</version>
+    </dependency>
 
     <!-- Test !-->
     <dependency>
