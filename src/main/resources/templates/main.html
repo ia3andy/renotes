@@ -2,25 +2,8 @@
 <html>
   <head>
     <title>{#insert title/}</title>
-    <link rel="stylesheet" media="screen" href="/webjars/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" media="screen" href="/webjars/bootstrap-icons/font/bootstrap-icons.css">
-    <script src="/webjars/htmx.org/dist/htmx.js" type="text/javascript" charset="UTF-8"></script>
-    <script src="/webjars/easymde/dist/easymde.min.js" type="text/javascript" charset="UTF-8"></script>
-    <link rel="stylesheet" media="screen" href="/webjars/easymde/dist/easymde.min.css">
-    <script type="importmap">
-      {
-        "imports":{
-            "stimulus":"/webjars/hotwired__stimulus/dist/stimulus.js"
-	    }
-      }
+    {#bundleStyle /}
 
-    </script>
-    <script type="module">
-        import { Application } from "stimulus";
-        window.Stimulus = Application.start();
-    </script>
-    {#insert moreStyles /}
-    {#insert moreScripts /}
   </head>
   <body hx-ext="morphdom-swap">
     <div class="navbar navbar-light bg-light">
@@ -32,5 +15,6 @@
       </div>
     </div>
     {#insert /}
+    {#bundleScript /}
   </body>
 </html>
