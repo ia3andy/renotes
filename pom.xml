@@ -13,17 +13,10 @@
     <quarkus-renarde.version>3.0.1</quarkus-renarde.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>3.0.1.Final</quarkus.platform.version>
+    <quarkus.platform.version>3.1.0.Final</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
   </properties>
-  <repositories>
-    <repository>
-      <id>mvnpm.org</id>
-      <name>mvnpm</name>
-      <url>https://repo.mvnpm.org/maven2</url>
-    </repository>
-  </repositories>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -56,13 +49,19 @@
     <dependency>
       <groupId>io.quarkiverse.web-bundler</groupId>
       <artifactId>quarkus-web-bundler</artifactId>
-      <version>0.0.1-alpha3</version>
+      <version>0.0.1-alpha4</version>
     </dependency>
+
     <!-- MVNPM !-->
     <dependency>
       <groupId>org.mvnpm</groupId>
       <artifactId>htmx.org</artifactId>
-      <version>1.9.1</version>
+      <version>1.9.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mvnpm.at.hotwired</groupId>
+      <artifactId>stimulus</artifactId>
+      <version>3.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.mvnpm</groupId>
@@ -74,9 +73,6 @@
       <artifactId>bootstrap-icons</artifactId>
       <version>1.10.5</version>
     </dependency>
-
-
-
     <dependency>
       <groupId>org.mvnpm.at.hotwired</groupId>
       <artifactId>stimulus</artifactId>
@@ -152,6 +148,18 @@
       </plugin>
     </plugins>
   </build>
+  <repositories>
+    <repository>
+      <id>central</id>
+      <name>central</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <id>mvnpm.org</id>
+      <name>mvnpm</name>
+      <url>https://repo.mvnpm.org/maven2</url>
+    </repository>
+  </repositories>
   <profiles>
     <profile>
       <id>native</id>
