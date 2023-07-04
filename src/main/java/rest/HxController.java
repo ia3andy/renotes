@@ -1,18 +1,22 @@
 package rest;
 
-import io.quarkiverse.renarde.Controller;
-import io.quarkus.qute.Qute;
-import io.quarkus.qute.TemplateInstance;
-import io.vertx.core.http.HttpServerResponse;
+import java.util.Arrays;
+import java.util.Objects;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.Objects;
 
-public class HxController extends Controller {
+import io.quarkiverse.renarde.Controller;
+import io.quarkus.qute.Qute;
+import io.quarkus.qute.TemplateInstance;
+import io.vertx.core.http.HttpServerResponse;
+
+/**
+ * This is a Controller's overlay to simplify usage of Quarkus Renarde alongside {@see <a href="https://htmx.org/">htmx</a>}.
+ */
+public abstract class HxController extends Controller {
 
     public static final String HX_REQUEST_HEADER = "HX-Request";
 
@@ -49,6 +53,16 @@ public class HxController extends Controller {
     @Inject
     protected HttpServerResponse response;
 
+    /**
+     * This Qute helper make it easy to achieve htmx "Out of Band" swap by choosing which templates to return (refresh).
+     * <br />
+     * {@see <a href="https://htmx.org/attributes/hx-swap-oob/">Doc for htmx "hx-swap-oob"</a>}
+     *
+     * <br />
+     *
+     * @param templates the list of template instances to concatenate
+     * @return the concatenated templates instances
+     */
     public static TemplateInstance concatTemplates(TemplateInstance... templates) {
         return Qute.fmt("{#each elements}{it.raw}{/each}")
                 .cache()
@@ -56,23 +70,9 @@ public class HxController extends Controller {
                 .instance();
     }
 
-    protected void flashHxRequest() {
-        flash(HX_REQUEST_HEADER, isHxRequest());
-    }
-
-    protected void onlyHxRequest() {
-        if (!isHxRequest()) {
-            throw new WebApplicationException(
-                    Response.status(Response.Status.BAD_REQUEST).entity("Only Hx request are allowed on this method").build());
-        }
-    }
-
-    @Override
-    protected void prepareForErrorRedirect() {
-        flashHxRequest();
-        super.prepareForErrorRedirect();
-    }
-
+    /**
+     * Check if this request has the htmx flag (header or flash data)
+     */
     protected boolean isHxRequest() {
         final boolean hxRequest = Objects.equals(flash.get(HX_REQUEST_HEADER), true);
         if (hxRequest) {
@@ -81,8 +81,38 @@ public class HxController extends Controller {
         return Objects.equals(httpHeaders.getHeaderString(HX_REQUEST_HEADER), "true");
     }
 
+    /**
+     * Helper to define htmx response headers.
+     *
+     * @param hxHeader the {@link HxResponseHeader} to define
+     * @param value the value for this header
+     */
     protected void hx(HxResponseHeader hxHeader, String value) {
         response.headers().set(hxHeader.key(), value);
+    }
+
+    /**
+     * Make sure only htmx requests are calling this method.
+     */
+    protected void onlyHxRequest() {
+        if (!isHxRequest()) {
+            throw new WebApplicationException(
+                    Response.status(Response.Status.BAD_REQUEST).entity("Only Hx request are allowed on this method").build());
+        }
+    }
+
+    /**
+     * Keep the htmx flag for the redirect request.
+     * This is automatic.
+     */
+    protected void flashHxRequest() {
+        flash(HX_REQUEST_HEADER, isHxRequest());
+    }
+
+    @Override
+    protected void beforeRedirect() {
+        flashHxRequest();
+        super.beforeRedirect();
     }
 
 }
