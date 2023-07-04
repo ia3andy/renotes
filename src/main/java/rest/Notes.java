@@ -88,7 +88,6 @@ public class Notes extends HxController {
         note.content = content;
         note.updated = new Date();
         note.persist();
-        flashHxRequest();
         editNote(id);
     }
 
@@ -101,7 +100,6 @@ public class Notes extends HxController {
         note.name = name;
         note.content = content;
         note.persist();
-        flashHxRequest();
         editNote(note.id);
     }
 }

@@ -10,12 +10,13 @@
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus-renarde.version>3.0.1</quarkus-renarde.version>
+    <quarkus-renarde.version>3.0.2</quarkus-renarde.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     <quarkus.platform.version>3.1.0.Final</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
+    <quarkus-web-bundler.version>1.0.0-CR2</quarkus-web-bundler.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -49,7 +50,7 @@
     <dependency>
       <groupId>io.quarkiverse.web-bundler</groupId>
       <artifactId>quarkus-web-bundler</artifactId>
-      <version>0.0.1-alpha4</version>
+      <version>${quarkus-web-bundler.version}</version>
     </dependency>
 
     <!-- MVNPM !-->
