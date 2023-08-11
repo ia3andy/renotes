@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>{#insert title/}</title>
-    {#bundleStyle /}
+    {#bundle tag="style"/}
 
   </head>
   <body hx-ext="morphdom-swap">
@@ -15,6 +15,6 @@
       </div>
     </div>
     {#insert /}
-    {#bundleScript /}
+    {#bundle tag="script"/}
   </body>
 </html>
