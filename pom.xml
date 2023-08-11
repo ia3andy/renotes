@@ -75,11 +75,6 @@
       <version>1.10.5</version>
     </dependency>
     <dependency>
-      <groupId>org.mvnpm.at.hotwired</groupId>
-      <artifactId>stimulus</artifactId>
-      <version>3.2.1</version>
-    </dependency>
-    <dependency>
       <groupId>org.mvnpm</groupId>
       <artifactId>easymde</artifactId>
       <version>2.18.0</version>
