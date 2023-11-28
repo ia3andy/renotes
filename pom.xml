@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.acme</groupId>
   <artifactId>renotes</artifactId>
@@ -10,13 +9,13 @@
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus-renarde.version>3.0.2</quarkus-renarde.version>
+    <quarkus-renarde.version>3.0.5</quarkus-renarde.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>3.4.3</quarkus.platform.version>
+    <quarkus.platform.version>3.6.0</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
-    <quarkus-web-bundler.version>1.1.4</quarkus-web-bundler.version>
+    <quarkus-web-bundler.version>1.1.6</quarkus-web-bundler.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -52,7 +51,6 @@
       <artifactId>quarkus-web-bundler</artifactId>
       <version>${quarkus-web-bundler.version}</version>
     </dependency>
-
     <!-- MVNPM !-->
     <dependency>
       <groupId>org.mvnpm</groupId>
@@ -79,7 +77,6 @@
       <artifactId>easymde</artifactId>
       <version>2.18.0</version>
     </dependency>
-
     <!-- Test !-->
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -156,6 +153,23 @@
         <skipITs>false</skipITs>
         <quarkus.package.type>native</quarkus.package.type>
       </properties>
+    </profile>
+    <profile>
+      <id>locker</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.acme</groupId>
+            <artifactId>renotes-locker</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
     </profile>
   </profiles>
 </project>
