@@ -9,13 +9,13 @@
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus-renarde.version>3.0.7</quarkus-renarde.version>
+    <quarkus-renarde.version>3.0.17</quarkus-renarde.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>3.9.3</quarkus.platform.version>
+    <quarkus.platform.version>3.12.1</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
-    <quarkus-web-bundler.version>1.5.0.CR1</quarkus-web-bundler.version>
+    <quarkus-web-bundler.version>1.6.0</quarkus-web-bundler.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -60,7 +60,13 @@
     <dependency>
       <groupId>org.mvnpm</groupId>
       <artifactId>htmx.org</artifactId>
-      <version>1.9.2</version>
+      <version>1.9.12</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mvnpm.at.popperjs</groupId>
+      <artifactId>core</artifactId>
+      <version>2.11.8</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
