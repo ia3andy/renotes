@@ -9,13 +9,13 @@
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus-renarde.version>3.0.18</quarkus-renarde.version>
+    <quarkus-renarde.version>3.1.2</quarkus-renarde.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>3.12.3</quarkus.platform.version>
+    <quarkus.platform.version>3.29.2</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
-    <quarkus-web-bundler.version>1.7.0</quarkus-web-bundler.version>
+    <quarkus-web-bundler.version>2.0.1</quarkus-web-bundler.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -39,11 +39,6 @@
       <version>${quarkus-renarde.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.quarkiverse.qute.web</groupId>
-      <artifactId>quarkus-qute-web</artifactId>
-      <version>3.0.0</version>
-    </dependency>
-    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-arc</artifactId>
     </dependency>
@@ -60,13 +55,7 @@
     <dependency>
       <groupId>org.mvnpm</groupId>
       <artifactId>htmx.org</artifactId>
-      <version>2.0.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mvnpm.at.popperjs</groupId>
-      <artifactId>core</artifactId>
-      <version>2.11.8</version>
+      <version>2.0.7</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -78,7 +67,7 @@
     <dependency>
       <groupId>org.mvnpm</groupId>
       <artifactId>bootstrap</artifactId>
-      <version>5.2.3</version>
+      <version>5.3.8</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
